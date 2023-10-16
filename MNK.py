@@ -8,7 +8,7 @@ def draw_latex(latex):
     axes.set_axis_off()
     plt.text(0.5, 0.5, latex, fontsize=16, horizontalalignment='center', verticalalignment='center', color='black')
     fig.set_size_inches(0.1,0.1)
-    plt.show()
+    # plt.show()
     
 def complement(raw_str, **subs):
     parts = raw_str.split('`')
@@ -83,7 +83,7 @@ def __MNK__(xs, ys, x_tag, y_tag, x_dim, y_dim, k_dim, b_dim, p = 0, ap = 0):
                     cellText=rows + [afts(aves)])
     tab.set_fontsize(18)
     tab.scale(1, 4)
-    plt.show()
+    # plt.show()
     k_formula = r"\frac{{`xy`} - {`x`} \cdot {`y`}}{`x2` - `x_2`}"
     k = (aves[4] - aves[0]*aves[1]) / (aves[2] - aves[0]**2)
     draw_latex(complement("$x = `x_tag` \; `x_dim`$", x_tag=x_tag, x_dim=("[" + x_dim + "]" if x_dim is not None else "")))
