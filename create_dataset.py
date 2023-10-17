@@ -6,14 +6,14 @@ plt.rcParams ['figure.figsize'] = [8, 8]
 
 k = 1
 limit = 100
-error = 50
+error = 20
 
 X = []
 Y = []
 
 with open("dataset.txt", "w") as file:
     for i in range(limit):
-        for j in range (10):
+        for j in range (2):
             x = i + error * random.random()
             y = k * i + error * random.random()
 
