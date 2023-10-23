@@ -13,7 +13,7 @@ Y = []
 
 with open("dataset.txt", "w") as file:
     for i in range(limit):
-        for j in range (2):
+        for j in range (5):
             x = i + error * random.random()
             y = k * i + error * random.random()
 
