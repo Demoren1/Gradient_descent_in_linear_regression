@@ -35,8 +35,6 @@ class linear_regression_coupling:
         d_theta = 1 / self.m * self.x.T.dot(self.y_pred - self.y)
         d_theta_private = 1 / self.m_private * self.x_private.T.dot(self.y_pred_private - self.y_private)
         
-        d_theta_private = momentum * d_theta_private + (1 - momentum) * d_theta
-
         return d_theta, d_theta_private
 
 
@@ -49,7 +47,7 @@ class linear_regression_coupling:
         self.ordinary_steps.append(self.theta - learning_rate_1 * d_theta)
         self.aggressive_steps.append(np.array(self.aggressive_steps[-1]).reshape(2, 1) - learning_rate_2 * d_theta_private)
 
-        self.theta = momentum * np.array(self.aggressive_steps[-1]) + (1 - momentum) * np.array(self.ordinary_steps[-1])
+        self.theta = momentum * self.aggressive_steps[-1] + (1 - momentum) * self.ordinary_steps[-1]
 
         self.old_thetas.append(np.copy(self.theta))
 
@@ -67,12 +65,10 @@ class linear_regression_coupling:
         x_check = [i[1] for i in self.x]
         y_check = [i[0] for i in self.y]
 
-        k, b, *_ = _mnk(x_check, y_check)
-
-        true_theta = np.array([b, k]).reshape(2, 1)
-        theta = np.sum(np.array(self.old_thetas), axis=0) / len(self.old_thetas)
+        k, *_ = _mnk(x_check, y_check)
         
-        accuracy = float(np.linalg.norm(true_theta - theta) / np.linalg.norm(true_theta))
+        theta = np.sum(np.array(self.old_thetas), axis=0) / len(self.old_thetas)
+        accuracy = float(1 - abs((k - theta[1]) / k))
         return accuracy
     
 
@@ -84,13 +80,11 @@ class linear_regression_coupling:
         y_private = self.y_private
         
         theta = np.sum(np.array(self.old_thetas), axis=0) / len(self.old_thetas)
-        # print(self.old_thetas)
-        # print("theta is\n", theta)
 
         cost_list = self.cost_list
 
-        tmp_x = list(x[:, 1]) 
-        tmp_y = list(y[:, 0]) 
+        tmp_x = list(x[:, 1]) + list(x_private[:, 1])
+        tmp_y = list(y[:, 0]) + list(y_private[:, 0])
 
         x_check = [elem for elem in tmp_x]
         y_check = [elem for elem in tmp_y]
