@@ -6,8 +6,10 @@ class Linear_Regression:
     def __init__(self, data : np.ndarray):
         self.x = data[:, 0]
         self.y = data[:, 1]
+
         self.y = self.y.reshape(self.y.size, 1)
         self.x = np.vstack((np.ones((self.x.size, )), self.x)).T
+        
         self.cost_list = []
         self.m = self.y.size
         self.theta = np.zeros((2, 1))
@@ -22,8 +24,6 @@ class Linear_Regression:
 
     def compute_cost(self):
         cost = 0
-        # for y_i in self.y:    ## if want to train it truly
-        #     cost += 1 / (2 * self.m) * (self.y_pred[0] - y_i[0])**2
         cost = 1 / (2 * self.m) * np.sum(np.square(self.y_pred - self.y, dtype=np.float64))
 
         self.cost_list.append(cost)

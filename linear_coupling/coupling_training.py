@@ -5,19 +5,19 @@ import data_manager
 def main():
     file_1 = "../datasets/dataset.txt"
     file_2 = "../datasets/private_dataset.txt"
-    iteration = 1000000
+    iteration = 100000
     learning_rate_1 = 0.0001
     learning_rate_2 = 0.0001
     momentum = 0.5
 
-    # data_manager.show_2_datasets(file_1, file_2)
+    # data_manager.show_2_datasets_ff(file_1, file_2)
     
     data = np.loadtxt(file_1, delimiter=' ')
     private_data = np.loadtxt(file_2, delimiter=' ')
 
     model = linear_coupling.linear_regression_coupling(data, private_data)
     train_model(model, iteration, learning_rate_1, learning_rate_2, momentum)
-    model.show_graphs()
+    model.show_graphs(momentum)
 
     print("accuracy is ", model.get_current_accuracy())
 

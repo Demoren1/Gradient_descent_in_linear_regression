@@ -23,39 +23,38 @@ class linear_regression_coupling:
         self.old_thetas = []
         self.old_thetas.append(np.copy(self.theta))
 
-        self.ordinary_steps = [self.x[1]]
-        self.aggressive_steps = [self.x_private[1]]
+        self.ordinary_steps = [np.zeros((2, 1))]
+        self.aggressive_steps = [np.zeros((2, 1))]
 
         self.y_pred = 0
         self.y_pred_private = 0
         
         self.cost_list = []
 
-    def find_gradient(self, momentum):
-        d_theta = 1 / self.m * self.x.T.dot(self.y_pred - self.y)
-        d_theta_private = 1 / self.m_private * self.x_private.T.dot(self.y_pred_private - self.y_private)
-        
-        return d_theta, d_theta_private
+    def find_gradient(self):
+        d_theta = 1 / (self.m + self.m_private) * (self.x.T.dot(self.y_pred - self.y) +
+                                                   self.x_private.T.dot(self.y_pred_private - self.y_private))
+        return d_theta
 
 
     def update_theta(self,learning_rate_1, learning_rate_2, momentum):
         self.y_pred = np.dot(self.x, self.theta)
         self.y_pred_private = np.dot(self.x_private, self.theta)
 
-        d_theta, d_theta_private = self.find_gradient(momentum)
+        d_theta= self.find_gradient()
 
         self.ordinary_steps.append(self.theta - learning_rate_1 * d_theta)
-        self.aggressive_steps.append(np.array(self.aggressive_steps[-1]).reshape(2, 1) - learning_rate_2 * d_theta_private)
+        self.aggressive_steps.append(np.array(self.aggressive_steps[-1]).reshape(2, 1) - learning_rate_2 * d_theta)
+
 
         self.theta = momentum * self.aggressive_steps[-1] + (1 - momentum) * self.ordinary_steps[-1]
-
         self.old_thetas.append(np.copy(self.theta))
 
 
     def compute_cost(self):
         cost = 0
-        cost += 1 / (2 * self.m) * np.sum(np.square(self.y_pred - self.y, dtype=np.float64))
-        cost += 1 / (2 * self.m_private) * np.sum(np.square(self.y_pred_private - self.y_private, dtype=np.float64))
+        cost += 1 / (2 * self.m + 2 * self.m_private) * (np.sum(np.square(self.y_pred - self.y, dtype=np.float64)) + 
+                                                         np.sum(np.square(self.y_pred_private - self.y_private, dtype=np.float64)))
 
         self.cost_list.append(cost)
         return cost
@@ -72,7 +71,7 @@ class linear_regression_coupling:
         return accuracy
     
 
-    def show_graphs(self):
+    def show_graphs(self, momentum):
         x = self.x
         y = self.y
 
@@ -83,23 +82,37 @@ class linear_regression_coupling:
 
         cost_list = self.cost_list
 
-        tmp_x = list(x[:, 1]) + list(x_private[:, 1])
-        tmp_y = list(y[:, 0]) + list(y_private[:, 0])
+        tmp_x = list(x[:, 1])
+        tmp_x_private = list(x_private[:, 1])
+
+        tmp_y = list(y[:, 0])
+        tmp_y_private = list(y_private[:, 0])
+
 
         x_check = [elem for elem in tmp_x]
+        x_check_private = [elem for elem in tmp_x_private]
+
         y_check = [elem for elem in tmp_y]
+        y_check_private = [elem for elem in tmp_y_private]
 
         k, b, *_ = _mnk(x_check, y_check)
+        k_private, b_private, *_ = _mnk(x_check_private, y_check_private)
 
-        x_line = [0, max(x_check)]
+        x_line = [0, max(max(x_check), max(x_check_private))]
+
+        k = momentum * k_private + (1 - momentum) * k
+        b = momentum * b_private + (1 - momentum) * b
+
         y_line = [k * x_line[0] + b, k * x_line[1] + b]
 
 
         print("predictable b =", theta[0], ", predictable k =", theta[1])
-        print("b =", b, ",k =", k)
+        print("b =", b, ", k =", k)
 
-        plt.plot(list(x[:, 1]), y, '.', color="blue", label="data")
-        plt.plot(list(x_private[:, 1]), y_private, '.', color="red", label="private data")
+        plt.grid()
+
+        plt.plot(list(x[:, 1]), y, 'v', color="blue", label="data1")
+        plt.plot(list(x_private[:, 1]), y_private, '^', color="red", label="data2")
 
         tmp_x = np.array(list(x) + list(x_private))
 

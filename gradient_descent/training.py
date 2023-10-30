@@ -2,8 +2,8 @@ import linear_regression
 import numpy as np
 
 def main():
-    file = "../dataset.txt"
-    iteration = 40
+    file = "../datasets/dataset.txt"
+    iteration = 1000000
     learning_rate = 0.0001
     
     data = np.loadtxt(file, delimiter=' ')

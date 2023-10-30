@@ -7,18 +7,18 @@ def main():
     file_1 = "datasets/dataset.txt"
     file_2 = "datasets/private_dataset.txt"
     create_dataset(file_2, 1)
-    show_2_datasets(file_1, file_2)
+    show_2_datasets_ff(file_1, file_2)
 
 
 def create_dataset(file, private_dataset_flag = False):
     plt.rcParams ['figure.figsize'] = [8, 8]
 
-    k = 1
-    b = 5
-    start = 20
+    k = -1
+    b = 110
+    start = 30
     limit = 20
-    error = 10
-    density = 10
+    error = 5
+    density = 6
 
     X = []
     Y = []
@@ -31,7 +31,7 @@ def create_dataset(file, private_dataset_flag = False):
                 y = k * 0.5 * x + b + error * (random.random() - 0.5)
 
                 if (private_dataset_flag):
-                    y += 30
+                    y += 5
 
                 line = [str(x)[:5] for x in [x, y]]
                 line = " ".join(line)
@@ -59,7 +59,7 @@ def create_dataset(file, private_dataset_flag = False):
 
     plt.show()
 
-def show_2_datasets(file1, file2):
+def show_2_datasets_ff(file1, file2):
     data1 = np.loadtxt(file1, delimiter=' ')
     data2 = np.loadtxt(file2, delimiter=' ')
 
@@ -79,7 +79,25 @@ def show_2_datasets(file1, file2):
     plt.show()
 
 
+def show_2_datasets_dd(data1, data2):
+    x1 = data1[:, 0]
+    y1 = data1[:, 1]
+
+    x2 = data2[:, 0]
+    y2 = data2[:, 1]
+
+    plt.rcParams ['figure.figsize'] = [8, 8]
+
+    plt.grid()
+    plt.plot(x1, y1, '.', label="first dataset", color="blue")
+    plt.plot(x2, y2, '.', label="second dataset", color="red")
+
+    plt.legend()
+    plt.show()
+
+
 main()
+
 
 
     

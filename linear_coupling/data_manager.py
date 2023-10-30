@@ -58,7 +58,7 @@ def create_dataset(file, private_dataset_flag = False):
 
     plt.show()
 
-def show_2_datasets(file1, file2):
+def show_2_datasets_ff(file1, file2):
     data1 = np.loadtxt(file1, delimiter=' ')
     data2 = np.loadtxt(file2, delimiter=' ')
 
@@ -77,6 +77,30 @@ def show_2_datasets(file1, file2):
     plt.legend()
     plt.show()
 
+
+def show_2_datasets_dd(data1, data2):
+    x1 = []
+    y1 = []
+
+    x2 = []
+    y2 = []
+
+    for vector in data1:
+        x1.append(vector[0])
+        y1.append(vector[1])
+
+    for vector in data2:
+        x2.append(vector[0])
+        y2.append(vector[1])
+
+    plt.rcParams ['figure.figsize'] = [8, 8]
+
+    plt.grid()
+    plt.plot(x1, y1, '+', label="first dataset", color="blue")
+    plt.plot(x2, y2, '*', label="second dataset", color="red")
+
+    plt.legend()
+    plt.show()
 
 main()
 
